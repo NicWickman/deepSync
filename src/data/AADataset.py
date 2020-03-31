@@ -12,7 +12,7 @@ class AADataset(Dataset):
         self,
         root,
         data_path=Path('data'),
-        anim_csv=Path('data.csv'),
+        anim_path=Path('data.csv'),
         audio_path=Path('audio'),
         audio_ext='.aif',
         download=False,
