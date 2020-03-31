@@ -2,6 +2,9 @@ from pathlib import Path
 import mimetypes
 import torchaudio
 
+AUDIO_EXTENSIONS = tuple(str.lower(k) for k, v in mimetypes.types_map.items()
+                         if v.startswith('audio/'))
+
 
 class AudioData:
     '''Holds basic information from audio signal'''
