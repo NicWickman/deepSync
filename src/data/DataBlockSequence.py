@@ -1,6 +1,6 @@
-from AudioCommon import *
-from DataBlock import *
-from DataAugmentation import *
+from .AudioCommon import *
+from .DataBlock import *
+from .DataAugmentation import *
 
 import mimetypes
 from fastai.vision import *

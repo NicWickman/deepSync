@@ -1,4 +1,4 @@
-from AudioCommon import AudioData
+from .AudioCommon import AudioData
 from fastai.utils import *
 from fastai.vision import *
 from IPython.display import Audio
