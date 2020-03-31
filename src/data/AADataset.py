@@ -1,8 +1,11 @@
 from pathlib import Path
+from ast import literal_eval
 from torch.utils.data import Dataset
 import os
 import pandas as pd
 import torchaudio
+import tarfile
+from torchaudio.datasets.utils import walk_files
 
 
 class AADataset(Dataset):
@@ -14,11 +17,11 @@ class AADataset(Dataset):
     def __init__(
         self,
         root,
-        data_path=Path('data'),
+        data_path=Path('data/raw'),
         anim_path=Path('data.csv'),
         audio_path=Path('audio'),
         audio_ext='.aif',
-        download=False,
+        unpack_audio=False,
         transform=None,
         target_transform=None,
     ):
@@ -26,13 +29,20 @@ class AADataset(Dataset):
         self.transform = transform
         self.target_transform = target_transform
 
+        self._audio_rar = root/data_path/Path('audio.tar.gz')
         self._audio_path = root/data_path/audio_path
         self._anim_path = root/data_path/anim_path
         self._ext_audio = audio_ext
 
+        if unpack_audio == True:
+            if not os.path.exists(self._audio_path):
+                os.mkdir(self._audio_path)
+            print(self._anim_path)
+            tarfile.open(self._audio_rar, 'r:gz').extractall(self._audio_path)
+
         if not os.path.isdir(self._audio_path):
             raise RuntimeError(
-                "Dataset not found. Please use `download=True` to download it."
+                "Dataset not found."
             )
 
         self.df = self._process_df(pd.read_csv(self._anim_path))
@@ -43,7 +53,7 @@ class AADataset(Dataset):
 
         # self._walker = list(walker)
         self._walker = [x for x in list(walker) if len(
-            self.df[self.df['Audio File'].str.contains(x)]['jawTrans_ty']) > 0]
+            self.df[self.df['Audio File'].str.contains(x)]['jawTrans_ty']) > 0]  # Filter out missing audio
 
     def _process_df(self, df):
         def convert_to_list(x):
